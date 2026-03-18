@@ -133,6 +133,11 @@ textarea {
   max-width: none;
 }
 
+.app-shell__content--auth {
+  padding: 0;
+  min-height: calc(100vh - 2 * clamp(14px, 1.8vw, 22px));
+}
+
 .surface-panel {
   border: 1px solid var(--line);
   border-radius: var(--radius-xl);

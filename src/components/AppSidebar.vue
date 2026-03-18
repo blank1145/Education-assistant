@@ -1,10 +1,14 @@
 <script setup>
-import { computed } from "vue";
-import { RouterLink, useRoute } from "vue-router";
+import { computed, ref, onMounted, onUnmounted } from "vue";
+import { RouterLink, useRoute, useRouter } from "vue-router";
 import { useEduScopeStore } from "../composables/useEduScopeStore";
 
 const route = useRoute();
+const router = useRouter();
 const store = useEduScopeStore();
+
+const showUserMenu = ref(false);
+const userSectionRef = ref(null);
 
 const navGroups = [
   {
@@ -24,7 +28,13 @@ const navGroups = [
         label: "AI 工作区",
         to: "/ai",
         badge: "02",
-        matchPrefixes: ["/ai", "/assistant", "/question-studio", "/paper-studio", "/question-variant"],
+        matchPrefixes: [
+          "/ai",
+          "/assistant",
+          "/question-studio",
+          "/paper-studio",
+          "/question-variant",
+        ],
         children: [
           { label: "智能助手", to: "/assistant" },
           { label: "智能出题", to: "/question-studio" },
@@ -61,16 +71,54 @@ const datasetStatus = computed(() => {
   return "未导入";
 });
 
+const userDisplayName = computed(() => {
+  return store.auth.user?.nickname || store.auth.user?.username || "用户";
+});
+
 function isActive(item) {
   if (item.to === "/") {
     return route.path === "/";
   }
-  const prefixes = Array.isArray(item.matchPrefixes) ? item.matchPrefixes : [item.matchPrefix || item.to];
-  return route.path === item.to || prefixes.some((prefix) => route.path.startsWith(prefix));
+  const prefixes = Array.isArray(item.matchPrefixes)
+    ? item.matchPrefixes
+    : [item.matchPrefix || item.to];
+  return (
+    route.path === item.to ||
+    prefixes.some((prefix) => route.path.startsWith(prefix))
+  );
 }
 
 function isChildActive(child) {
   return route.path === child.to || route.path.startsWith(`${child.to}/`);
+}
+
+function toggleUserMenu() {
+  showUserMenu.value = !showUserMenu.value;
+}
+
+function closeUserMenu() {
+  showUserMenu.value = false;
+}
+
+function handleClickOutside(event) {
+  if (userSectionRef.value && !userSectionRef.value.contains(event.target)) {
+    closeUserMenu();
+  }
+}
+
+onMounted(() => {
+  document.addEventListener("click", handleClickOutside);
+});
+
+onUnmounted(() => {
+  document.removeEventListener("click", handleClickOutside);
+});
+
+async function handleLogout() {
+  closeUserMenu();
+  await store.logout();
+  store.showToast("已退出登录");
+  router.push("/login");
 }
 </script>
 
@@ -86,7 +134,11 @@ function isChildActive(child) {
     </div>
 
     <nav class="app-sidebar__nav" aria-label="站点导航">
-      <section v-for="group in navGroups" :key="group.label" class="sidebar-group">
+      <section
+        v-for="group in navGroups"
+        :key="group.label"
+        class="sidebar-group"
+      >
         <p class="sidebar-group__label">{{ group.label }}</p>
 
         <div v-for="item in group.items" :key="item.to" class="sidebar-item">
@@ -131,6 +183,74 @@ function isChildActive(child) {
           <strong>{{ datasetStatus }}</strong>
         </article>
       </div>
+
+      <div class="user-section" ref="userSectionRef">
+        <div class="user-info" @click="toggleUserMenu">
+          <div class="user-avatar">
+            {{ userDisplayName.charAt(0).toUpperCase() }}
+          </div>
+          <div class="user-details">
+            <span class="user-name">{{ userDisplayName }}</span>
+            <span class="user-role">{{
+              store.auth.user?.role === "admin" ? "管理员" : "普通用户"
+            }}</span>
+          </div>
+          <svg
+            class="user-arrow"
+            :class="{ 'user-arrow--open': showUserMenu }"
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
+        </div>
+
+        <transition name="menu-fade">
+          <div v-if="showUserMenu" class="user-menu">
+            <RouterLink
+              to="/profile"
+              class="user-menu-item"
+              @click="closeUserMenu"
+            >
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+              </svg>
+              个人资料
+            </RouterLink>
+            <div class="user-menu-divider"></div>
+            <button
+              class="user-menu-item user-menu-item--danger"
+              @click="handleLogout"
+            >
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                <polyline points="16 17 21 12 16 7"></polyline>
+                <line x1="21" y1="12" x2="9" y2="12"></line>
+              </svg>
+              退出登录
+            </button>
+          </div>
+        </transition>
+      </div>
     </div>
   </aside>
 </template>
@@ -146,7 +266,11 @@ function isChildActive(child) {
   padding: clamp(18px, 1.8vw, 24px);
   border: 1px solid var(--line);
   border-radius: 28px;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(244, 248, 255, 0.92));
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.98),
+    rgba(244, 248, 255, 0.92)
+  );
   box-shadow: var(--shadow-md);
 }
 
@@ -223,7 +347,11 @@ function isChildActive(child) {
 }
 
 .sidebar-link--active {
-  background: linear-gradient(135deg, rgba(47, 125, 244, 0.12), rgba(135, 208, 255, 0.12));
+  background: linear-gradient(
+    135deg,
+    rgba(47, 125, 244, 0.12),
+    rgba(135, 208, 255, 0.12)
+  );
   border-color: rgba(47, 125, 244, 0.16);
 }
 
@@ -319,6 +447,126 @@ function isChildActive(child) {
   display: block;
   margin-top: 6px;
   font-size: 1rem;
+}
+
+.user-section {
+  position: relative;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 18px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.86);
+  cursor: pointer;
+  transition: 180ms ease;
+}
+
+.user-info:hover {
+  background: rgba(47, 125, 244, 0.05);
+  border-color: rgba(47, 125, 244, 0.16);
+}
+
+.user-avatar {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+  background: linear-gradient(145deg, var(--copper), var(--teal));
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 0.875rem;
+}
+
+.user-details {
+  flex: 1;
+  min-width: 0;
+}
+
+.user-name {
+  display: block;
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: var(--ink);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.user-role {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--ink-soft);
+}
+
+.user-arrow {
+  color: var(--ink-soft);
+  transition: transform 180ms ease;
+}
+
+.user-arrow--open {
+  transform: rotate(180deg);
+}
+
+.user-menu {
+  position: absolute;
+  bottom: 100%;
+  left: 0;
+  right: 0;
+  margin-bottom: 8px;
+  padding: 8px;
+  border-radius: 16px;
+  border: 1px solid var(--line);
+  background: white;
+  box-shadow: var(--shadow-lg);
+}
+
+.user-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 10px 12px;
+  border: none;
+  border-radius: 10px;
+  background: none;
+  font-size: 0.875rem;
+  color: var(--ink);
+  cursor: pointer;
+  transition: 180ms ease;
+}
+
+.user-menu-item:hover {
+  background: rgba(47, 125, 244, 0.08);
+}
+
+.user-menu-item--danger {
+  color: #dc2626;
+}
+
+.user-menu-item--danger:hover {
+  background: rgba(220, 38, 38, 0.08);
+}
+
+.user-menu-divider {
+  height: 1px;
+  margin: 6px 0;
+  background: var(--line);
+}
+
+.menu-fade-enter-active,
+.menu-fade-leave-active {
+  transition: opacity 150ms ease, transform 150ms ease;
+}
+
+.menu-fade-enter-from,
+.menu-fade-leave-to {
+  opacity: 0;
+  transform: translateY(4px);
 }
 
 @media (max-width: 1100px) {

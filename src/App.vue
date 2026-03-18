@@ -7,14 +7,26 @@ import { useEduScopeStore } from "./composables/useEduScopeStore";
 const route = useRoute();
 const store = useEduScopeStore();
 
-const isImmersive = computed(() => route.name === "analysis-class-question" || route.name === "analysis-grade-overview");
-const activityEvents = ["click", "keydown", "mousemove", "touchstart", "scroll"];
+const isImmersive = computed(
+  () =>
+    route.name === "analysis-class-question" ||
+    route.name === "analysis-grade-overview"
+);
+const isAuthPage = computed(() => route.name === "login");
+const activityEvents = [
+  "click",
+  "keydown",
+  "mousemove",
+  "touchstart",
+  "scroll",
+];
 
 function refreshSession() {
   store.touchSession();
 }
 
-onMounted(() => {
+onMounted(async () => {
+  await store.initAuth();
   store.startSessionTimer();
   activityEvents.forEach((eventName) => {
     window.addEventListener(eventName, refreshSession, { passive: true });
@@ -30,9 +42,15 @@ onUnmounted(() => {
 
 <template>
   <div class="app-shell">
-    <AppSidebar />
+    <AppSidebar v-if="!isAuthPage" />
     <div class="app-shell__main">
-      <main class="app-shell__content" :class="{ 'app-shell__content--immersive': isImmersive }">
+      <main
+        class="app-shell__content"
+        :class="{
+          'app-shell__content--immersive': isImmersive,
+          'app-shell__content--auth': isAuthPage,
+        }"
+      >
         <RouterView />
       </main>
     </div>
