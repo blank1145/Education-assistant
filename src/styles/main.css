@@ -440,6 +440,16 @@ textarea {
   grid-template-columns: minmax(88px, 110px) minmax(0, 1fr);
 }
 
+.app-shell--fluid {
+  width: 100%;
+  max-width: none;
+  grid-template-columns: clamp(228px, 15vw, 286px) minmax(0, 1fr);
+}
+
+.app-shell--fluid.app-shell--collapsed {
+  grid-template-columns: clamp(88px, 6vw, 110px) minmax(0, 1fr);
+}
+
 .app-shell__main {
   min-width: 0;
   width: 100%;
@@ -454,6 +464,10 @@ textarea {
 
 .app-shell__content--immersive {
   width: 100%;
+  max-width: none;
+}
+
+.app-shell__content--fluid > * {
   max-width: none;
 }
 

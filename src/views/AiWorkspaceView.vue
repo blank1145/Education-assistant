@@ -255,8 +255,14 @@ function clearApiKey() {
 }
 
 .ai-workspace__layout {
-  grid-template-columns: minmax(0, 1.1fr) minmax(320px, 400px);
+  grid-template-columns: minmax(0, 1.35fr) minmax(320px, 0.92fr);
   align-items: start;
+}
+
+.ai-workspace__side {
+  display: grid;
+  gap: 20px;
+  align-content: start;
 }
 
 .setup-form,
@@ -265,6 +271,14 @@ function clearApiKey() {
 .usage-grid {
   display: grid;
   gap: 16px;
+}
+
+.workspace-card-list {
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.usage-grid {
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
 }
 
 .field {
@@ -348,7 +362,17 @@ function clearApiKey() {
 
 @media (max-width: 1366px) {
   .ai-workspace__layout {
-    grid-template-columns: minmax(0, 1fr) minmax(290px, 360px);
+    grid-template-columns: minmax(0, 1.12fr) minmax(280px, 360px);
+  }
+}
+
+@media (max-width: 1240px) {
+  .page-intro {
+    grid-template-columns: 1fr;
+  }
+
+  .page-intro__actions {
+    justify-content: flex-start;
   }
 }
 

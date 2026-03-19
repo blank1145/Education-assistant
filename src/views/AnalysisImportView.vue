@@ -88,16 +88,18 @@ const checklist = [
   display: grid;
   gap: 22px;
   align-content: start;
+  min-width: 0;
 }
 
 .analysis-hub__hero {
   display: grid;
-  grid-template-columns: minmax(0, 1.45fr) minmax(280px, 340px);
-  gap: 20px;
+  grid-template-columns: minmax(0, 1.12fr) minmax(300px, 0.88fr);
+  gap: clamp(18px, 2.2vw, 24px);
   align-items: start;
 }
 
 .analysis-hub__copy {
+  min-width: 0;
   padding: clamp(26px, 3vw, 36px);
   border: 1px solid var(--line);
   border-radius: 24px;
@@ -128,6 +130,7 @@ const checklist = [
 .analysis-card small,
 .session-card span {
   color: var(--ink-soft);
+  text-wrap: wrap;
 }
 
 .analysis-hub__lead {
@@ -138,6 +141,10 @@ const checklist = [
 .analysis-card-grid {
   display: grid;
   gap: 16px;
+}
+
+.session-grid {
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
 }
 
 .session-card {
@@ -154,13 +161,14 @@ const checklist = [
 }
 
 .analysis-card-grid {
-  grid-template-columns: repeat(2, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
 }
 
 .analysis-card {
   display: grid;
   gap: 12px;
   align-content: start;
+  min-height: 100%;
   padding: 24px;
   border: 1px solid var(--line);
   border-radius: 24px;
@@ -202,13 +210,13 @@ const checklist = [
   box-shadow: var(--card-shadow-hover), inset 0 1px 0 var(--surface-90);
 }
 
-@media (max-width: 1100px) {
+@media (max-width: 1240px) {
   .analysis-hub__hero {
     grid-template-columns: 1fr;
   }
 }
 
-@media (max-width: 820px) {
+@media (max-width: 700px) {
   .analysis-card-grid {
     grid-template-columns: 1fr;
   }

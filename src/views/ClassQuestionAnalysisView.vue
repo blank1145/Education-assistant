@@ -317,18 +317,20 @@ function buildClassInsightSummary(currentDataset) {
 .analysis-page {
   padding-bottom: 24px;
   align-content: start;
+  min-width: 0;
 }
 
 .analysis-hero,
 .topbar {
   display: flex;
   justify-content: space-between;
+  flex-wrap: wrap;
   gap: 16px;
   align-items: start;
 }
 
 .analysis-hero {
-  padding: 28px;
+  padding: clamp(24px, 2.4vw, 32px);
   border: 1px solid var(--line);
   border-radius: 24px;
   background: linear-gradient(145deg, rgba(255, 255, 255, 0.98), rgba(248, 250, 252, 0.94));
@@ -360,6 +362,7 @@ function buildClassInsightSummary(currentDataset) {
   margin: 12px 0 0;
   color: var(--ink-soft);
   line-height: 1.7;
+  text-wrap: wrap;
 }
 
 .page-btn {
@@ -367,6 +370,7 @@ function buildClassInsightSummary(currentDataset) {
   border: 0;
   border-radius: 999px;
   font-weight: 700;
+  white-space: nowrap;
 }
 
 .page-btn--primary {
@@ -380,8 +384,8 @@ function buildClassInsightSummary(currentDataset) {
 
 .upload-layout {
   display: grid;
-  grid-template-columns: minmax(0, 1.3fr) minmax(320px, 0.7fr);
-  gap: 20px;
+  grid-template-columns: minmax(0, 1.14fr) minmax(320px, 0.86fr);
+  gap: clamp(18px, 2vw, 24px);
   align-items: start;
 }
 
@@ -403,25 +407,33 @@ function buildClassInsightSummary(currentDataset) {
 }
 
 .upload-actions {
-  margin-top: 12px;
-  padding-top: 6px;
+  justify-content: flex-end;
+  margin-top: clamp(18px, 2vw, 28px);
+  padding-top: 10px;
 }
 
 .metric-grid {
-  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
 }
 
 .chart-grid {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  align-items: stretch;
+}
+
+.chart-grid > *,
+.table-grid > *,
+.upload-layout > * {
+  min-width: 0;
 }
 
 .chart-host {
-  height: 320px;
+  height: clamp(300px, 28vw, 360px);
 }
 
 .ai-insight-empty,
 .ai-insight-content {
-  min-height: 320px;
+  min-height: clamp(300px, 28vw, 360px);
 }
 
 .ai-insight-empty {
@@ -451,7 +463,7 @@ function buildClassInsightSummary(currentDataset) {
 }
 
 .table-grid {
-  grid-template-columns: 1.08fr 0.92fr;
+  grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
 }
 
 .table-wrap {
@@ -529,10 +541,8 @@ th {
   box-shadow: var(--card-shadow-hover), inset 0 1px 0 var(--surface-90);
 }
 
-@media (max-width: 1320px) {
-  .upload-layout,
-  .chart-grid,
-  .table-grid {
+@media (max-width: 1280px) {
+  .upload-layout {
     grid-template-columns: 1fr;
   }
 }
@@ -543,6 +553,22 @@ th {
   .topbar__actions {
     flex-direction: column;
     align-items: stretch;
+  }
+
+  .upload-actions,
+  .topbar__actions {
+    width: 100%;
+  }
+
+  .upload-actions .page-btn,
+  .topbar__actions .page-btn {
+    flex: 1 1 100%;
+  }
+}
+
+@media (max-width: 520px) {
+  .table-grid {
+    grid-template-columns: 1fr;
   }
 }
 </style>

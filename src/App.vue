@@ -7,8 +7,24 @@ import { useEduScopeStore } from "./composables/useEduScopeStore";
 const route = useRoute();
 const store = useEduScopeStore();
 const sidebarCollapsed = ref(false);
+const fluidRouteNames = new Set([
+  "home",
+  "ai-workspace",
+  "assistant",
+  "question-studio",
+  "question-studio-result",
+  "paper-studio",
+  "paper-studio-result",
+  "question-variant",
+  "question-variant-result",
+  "analysis",
+  "analysis-class-question",
+  "analysis-grade-overview",
+  "analysis-failure",
+]);
 
 const isImmersive = computed(() => route.name === "analysis-class-question" || route.name === "analysis-grade-overview");
+const isFluidContent = computed(() => fluidRouteNames.has(String(route.name || "")));
 const activityEvents = ["click", "keydown", "mousemove", "touchstart", "scroll"];
 
 function refreshSession() {
@@ -43,10 +59,13 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="app-shell" :class="{ 'app-shell--collapsed': sidebarCollapsed }">
+  <div class="app-shell" :class="{ 'app-shell--collapsed': sidebarCollapsed, 'app-shell--fluid': isFluidContent }">
     <AppSidebar :collapsed="sidebarCollapsed" @toggle-collapse="updateSidebarCollapsed" />
     <div class="app-shell__main">
-      <main class="app-shell__content" :class="{ 'app-shell__content--immersive': isImmersive }">
+      <main
+        class="app-shell__content"
+        :class="{ 'app-shell__content--immersive': isImmersive, 'app-shell__content--fluid': isFluidContent }"
+      >
         <RouterView />
       </main>
     </div>

@@ -183,6 +183,8 @@ onBeforeUnmount(() => {
 
 <style scoped>
 .overview-page {
+  display: grid;
+  min-width: 0;
   border-radius: 12px;
   overflow: hidden;
   background:
@@ -191,7 +193,8 @@ onBeforeUnmount(() => {
 }
 
 .overview-section {
-  padding: clamp(80px, 9vw, 100px) clamp(20px, 5vw, 72px);
+  min-width: 0;
+  padding: clamp(64px, 6vw, 96px) clamp(24px, 4vw, 72px);
 }
 
 .overview-section + .overview-section {
@@ -200,8 +203,8 @@ onBeforeUnmount(() => {
 
 .hero-section {
   display: grid;
-  grid-template-columns: minmax(0, 1.2fr) minmax(320px, 0.8fr);
-  gap: clamp(28px, 4vw, 52px);
+  grid-template-columns: minmax(0, 1.08fr) minmax(340px, 0.92fr);
+  gap: clamp(32px, 4vw, 56px);
   align-items: center;
 }
 
@@ -250,6 +253,7 @@ onBeforeUnmount(() => {
   font-size: 16px;
   line-height: 1.7;
   color: var(--ink-soft);
+  text-wrap: wrap;
 }
 
 .hero-actions {
@@ -289,7 +293,7 @@ onBeforeUnmount(() => {
 
 .kpi-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   gap: 14px;
   margin-top: 30px;
 }
@@ -298,6 +302,7 @@ onBeforeUnmount(() => {
 .module-card,
 .focus-card,
 .visual-card {
+  min-width: 0;
   position: relative;
   overflow: hidden;
   border: 1px solid var(--card-border);
@@ -358,6 +363,7 @@ onBeforeUnmount(() => {
 }
 
 .hero-visual {
+  min-width: 0;
   position: relative;
   min-height: 330px;
   padding: 20px;
@@ -452,15 +458,16 @@ onBeforeUnmount(() => {
 }
 
 .module-grid {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
 }
 
 .focus-grid {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
 }
 
 .module-card,
 .focus-card {
+  min-height: 100%;
   padding: 20px;
   align-content: start;
 }
@@ -504,7 +511,13 @@ onBeforeUnmount(() => {
   transform: translateY(0);
 }
 
-@media (max-width: 1220px) {
+@media (max-width: 1360px) {
+  .hero-section {
+    grid-template-columns: minmax(0, 1fr) minmax(300px, 0.86fr);
+  }
+}
+
+@media (max-width: 1180px) {
   .hero-section {
     grid-template-columns: 1fr;
   }
@@ -535,14 +548,15 @@ onBeforeUnmount(() => {
     left: auto;
   }
 
-  .module-grid,
-  .focus-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+@media (max-width: 980px) {
+  .overview-section {
+    padding: clamp(48px, 8vw, 72px) clamp(18px, 4vw, 28px);
   }
 }
 
-@media (max-width: 820px) {
-  .kpi-grid,
+@media (max-width: 760px) {
   .module-grid,
   .focus-grid {
     grid-template-columns: 1fr;
@@ -554,6 +568,12 @@ onBeforeUnmount(() => {
 
   .hero-btn {
     flex: 1 1 220px;
+  }
+}
+
+@media (max-width: 640px) {
+  .kpi-grid {
+    grid-template-columns: 1fr;
   }
 }
 </style>
